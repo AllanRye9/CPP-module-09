@@ -7,7 +7,6 @@
 #include <cstdlib>
 #include <iterator>
 #include <algorithm>
-#include <cstdlib>
 
 #define DATA_FILE "data.csv"
 

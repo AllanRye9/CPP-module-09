@@ -25,6 +25,8 @@ int RPN::readInput(const std::string &s)
     {
         _data.push_back(std::string(1, s[i]));
     }
+    if (isInvalidNumber(s))
+        return 0;
     return (_data.size() > 1 ? 1 : 0);
 }
 
@@ -34,8 +36,18 @@ void RPN::checkData()
     {
         if (!isOperator(*it->c_str()) && !isdigit(*it->c_str()) && !isspace(*it->c_str()))
             throw WrongDataException();
+        // throw GreaterThanException();
     }
 }
+
+bool RPN::isInvalidNumber(const std::string& str) {
+    for (size_t i = 0; i + 1 < str.size(); ++i) {
+        if (str[i] == '-' && std::isdigit(str[i + 1]))
+            return true;
+    }
+    return false;
+}
+
 
 void RPN::rpnMath(const std::string &s)
 {
@@ -47,9 +59,8 @@ void RPN::rpnMath(const std::string &s)
         if (*it != "+" && *it != "-" && *it != "/" && *it != "*")
         {
             int x = std::atoi((*it).c_str());
-            if (x < 0)
-                throw std::exception();
-            _st.push(x);
+            if (x != 0)
+                _st.push(x);
         }
         else
         {
@@ -76,3 +87,5 @@ void RPN::rpnMath(const std::string &s)
 }
 
 const char *RPN::WrongDataException ::what() const throw() { return "Wrong Input Format"; }
+
+const char *RPN::GreaterThanException ::what() const throw() { return "Value is Greater than 10"; }

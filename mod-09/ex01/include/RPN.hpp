@@ -21,8 +21,13 @@ public:
     RPN& operator=(const RPN& other);
     int readInput(const std::string &s);
     void checkData();
+    bool isInvalidNumber(const std::string& str);
     void rpnMath(const std::string &s);
     class WrongDataException : public std::exception{
+        public:
+            virtual const char *what() const throw();
+    };
+    class GreaterThanException : public std::exception{
         public:
             virtual const char *what() const throw();
     };

@@ -1,9 +1,9 @@
-#include "../include/RPN.hpp"
+#include "../include/PmergeMe.hpp"
 
-RPN::RPN(const RPN &other) { *this = other; }
-RPN::RPN() {}
-RPN::~RPN() {}
-RPN &RPN::operator=(const RPN &other)
+PmergeMe::PmergeMe(const PmergeMe &other) { *this = other; }
+PmergeMe::PmergeMe() {}
+PmergeMe::~PmergeMe() {}
+PmergeMe &PmergeMe::operator=(const PmergeMe &other)
 {
     if (this == &other)
         return (*this);
@@ -12,7 +12,7 @@ RPN &RPN::operator=(const RPN &other)
     return (*this);
 }
 
-bool RPN::isNegative(const std::string &str)
+bool PmergeMe::isNegative(const std::string &str)
 {
     size_t i = 0;
 
@@ -39,7 +39,7 @@ bool RPN::isNegative(const std::string &str)
     return false;
 }
 
-int RPN::readInput(const std::string &s)
+int PmergeMe::readInput(const std::string &s)
 {
     if (isNegative(s)) 
         throw NegativeException();
@@ -75,7 +75,7 @@ int RPN::readInput(const std::string &s)
 }
 
 
-void RPN::rpnMath(const std::string &s)
+void PmergeMe::PmergeMeMath(const std::string &s)
 {
     if (!readInput(s))
         throw WrongDataException();
@@ -107,8 +107,8 @@ void RPN::rpnMath(const std::string &s)
         std::cerr << "Error: stack is Empty" << std::endl;
 }
 
-const char *RPN::WrongDataException ::what() const throw() { return "Wrong Input Format"; }
+const char *PmergeMe::WrongDataException ::what() const throw() { return "Wrong Input Format"; }
 
-const char *RPN::GreaterThanException ::what() const throw() { return "Value is Greater than 10"; }
+const char *PmergeMe::GreaterThanException ::what() const throw() { return "Value is Greater than 10"; }
 
-const char *RPN::NegativeException ::what() const throw() { return "Number is negative"; }
+const char *PmergeMe::NegativeException ::what() const throw() { return "Number is negative"; }

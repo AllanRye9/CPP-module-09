@@ -2,8 +2,9 @@
 
 #include <iostream>
 #include <string>
-#include <list>
-#include <stack>
+#include <map>
+#include <set>
+#include <deque>
 #include <iterator>
 #include <exception>
 #include <algorithm>
@@ -12,21 +13,21 @@
 class PmergeMe
 {
 private:
-    std::stack<int> _st;
-    std::list<std::string> _data;
+    std::deque <int> _dData;
+    std::set <int> _sData;
 public:
-    PmergeMe();
+    PmergeMe(int ac, char **av);
     ~PmergeMe();
     PmergeMe(const PmergeMe& other);
     PmergeMe& operator=(const PmergeMe& other);
-    int readInput(const std::string &s);
+    template <typename T>
+    void display(const T & container){
+        for (T::const_iterator it = container.begin(); it != container.end(); it++)
+            std::cout << *it << " ";
+        std::cout << std::endl;
+    }
     bool isNegative(const std::string &str);
-    void PmergeMeMath(const std::string &s);
     class WrongDataException : public std::exception{
-        public:
-            virtual const char *what() const throw();
-    };
-    class GreaterThanException : public std::exception{
         public:
             virtual const char *what() const throw();
     };

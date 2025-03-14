@@ -1,6 +1,6 @@
 NAME =  PmergeMe
 
-SRC = 	srcs/main.cpp srcs/RPN.cpp
+SRC = 	srcs/main.cpp srcs/PmergeMe.cpp
 
 HEADER_DIR = include
 

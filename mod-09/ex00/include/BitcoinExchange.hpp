@@ -6,7 +6,9 @@
 #include <vector>
 #include <cstdlib>
 #include <iterator>
+#include <stdexcept>
 #include <algorithm>
+#include <cstring>
 
 #define DATA_FILE "data.csv"
 

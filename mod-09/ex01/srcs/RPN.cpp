@@ -85,6 +85,8 @@ void RPN::rpnMath(const std::string &s)
             _st.push(std::atoi((*it).c_str()));
         else
         {
+            if (_st.size() < 2)
+                throw std::runtime_error("Error: Not enough operands for operation");
             int b = _st.top();
             _st.pop();
             int a = _st.top();

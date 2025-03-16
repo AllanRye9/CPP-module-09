@@ -16,9 +16,7 @@ BitcoinExchange &BitcoinExchange::operator=(const BitcoinExchange &other)
 void BitcoinExchange::printResults(std::vector<std::string> &result)
 {
     for (std::vector<std::string>::iterator it = result.begin(); it != result.end(); ++it)
-    {
         std::cout << *it << std::endl;
-    }
 }
 
 void BitcoinExchange::printOutResults() { printResults(_outPut); }
@@ -75,7 +73,7 @@ static bool isLeapYear(int year)
 
 static int isInvalidDate(std::string &inputDate)
 {
-    if (inputDate.length() != 10) // Ensure the date string is in the format YYYY-MM-DD
+    if (inputDate.length() != 10)
         return 1;
 
     if (inputDate[4] != '-' || inputDate[7] != '-')
@@ -85,7 +83,7 @@ static int isInvalidDate(std::string &inputDate)
     if (year.find_first_not_of("0123456789") != std::string::npos)
         return 1;
 
-    int intYear = std::atoi(year.c_str()); // Convert to integer for year comparisons
+    int intYear = std::atoi(year.c_str());
 
     std::string month = inputDate.substr(5, 2);
     if (month.find_first_not_of("0123456789") != std::string::npos || std::atoi(month.c_str()) < 1 || std::atoi(month.c_str()) > 12)
@@ -132,10 +130,12 @@ static int isInvalidValue(std::string &inputDate, double *p)
         return (*p = NOT_POSITIVE, 1);
     if (findDots(inputDate, '.'))
         return (*p = MULTIPLE_DOTS, 1);
-    try{
+    try
+    {
         *p = std::atof(inputDate.c_str());
     }
-    catch (const std::exception &e){
+    catch (const std::exception &e)
+    {
         return (*p = TOO_LARGE, 1);
     }
     return 0;
@@ -144,13 +144,15 @@ static int isInvalidValue(std::string &inputDate, double *p)
 static void parseDateValue(std::string &liner, const char *c, int *date, double *value)
 {
     size_t i = liner.find(c[0]);
-    if (liner.length() < 12 || i != 10 || i == std::string::npos || liner.find_first_not_of(c) != std::string::npos){
+    if (liner.length() < 12 || i != 10 || i == std::string::npos || liner.find_first_not_of(c) != std::string::npos)
+    {
         *date = BAD_INPUT;
         return;
     }
     std::string inputDate;
     inputDate = liner.substr(0, i);
-    if (isInvalidDate(inputDate)){
+    if (isInvalidDate(inputDate))
+    {
         *date = INVALID_DATE;
         return;
     }
@@ -161,24 +163,33 @@ static void parseDateValue(std::string &liner, const char *c, int *date, double 
         return;
 }
 
-void BitcoinExchange::fillVector(std::vector<std::pair<std::string, std::pair<int, double  > > > &data, std::ifstream &input, const char *c)
+void BitcoinExchange::fillVector(std::vector<std::pair<std::string, std::pair<int, double> > > &data, std::ifstream &input, const char *c)
 {
     std::string line;
     std::string liner;
     int date = -1;
     int flag;
     double value = -1;
-
+    if (getline(input, line))
+    {
+        if (line != "date,exchange_rate" && line != "date | value")
+            value = MISSING_HEADER;
+        else
+            value = 0; // valid header indicator
+        liner = line;
+    }
+    else
+        throw std::runtime_error("Empty file");
+    if (value == MISSING_HEADER)
+        data.push_back(std::make_pair(liner, std::make_pair(value, MISSING_HEADER)));
     while (getline(input, line))
     {
         flag = checkFormats(line, c[0]);
         std::istringstream word(line);
         std::ostringstream oss;
-
         std::copy(std::istream_iterator<std::string>(word), std::istream_iterator<std::string>(), std::ostream_iterator<std::string>(oss));
         liner = oss.str();
-        if (liner[0] == 0 || liner == "date,exchange_rate" || liner == "date|value")
-            continue;
+
         parseDateValue(liner, c, &date, &value);
         if (!flag)
             data.push_back(std::make_pair(liner, std::make_pair(date, value)));
@@ -187,7 +198,7 @@ void BitcoinExchange::fillVector(std::vector<std::pair<std::string, std::pair<in
     }
 }
 
-static bool compareInts(const std::pair<std::string, std::pair<int, double > > &x, const std::pair<std::string, std::pair<int, double > > &y)
+static bool compareInts(const std::pair<std::string, std::pair<int, double> > &x, const std::pair<std::string, std::pair<int, double> > &y)
 {
     return x.second.first < y.second.first;
 }
@@ -199,13 +210,18 @@ void BitcoinExchange::populateOutPut()
     double value;
     double result;
 
-    for (std::vector<std::pair<std::string, std::pair<int, double > > >::iterator it = _inPut.begin(); it != _inPut.end(); ++it)
+    for (std::vector<std::pair<std::string, std::pair<int, double> > >::iterator it = _inPut.begin(); it != _inPut.end(); ++it)
     {
         line = it->first;
         date = it->second.first;
         value = it->second.second;
         result = 0;
 
+        if (value == MISSING_HEADER)
+        {
+            _outPut.push_back("Error: Missing or Invalid Header => " + line);
+            continue;
+        }
         if (date == BAD_INPUT)
         {
             _outPut.push_back("Error: bad input => " + line);
@@ -236,12 +252,7 @@ void BitcoinExchange::populateOutPut()
             _outPut.push_back("Error: bad input => " + line);
             continue;
         }
-        if (value == MISSING_HEADER)
-        {
-            _outPut.push_back("Error: Missing Header => " + line);
-            return ;
-        }
-        for (std::vector<std::pair<std::string, std::pair<int, double > > >::iterator itd = _data.begin(); itd != _data.end(); ++itd)
+        for (std::vector<std::pair<std::string, std::pair<int, double> > >::iterator itd = _data.begin(); itd != _data.end(); ++itd)
         {
             if (itd->second.first < 0 || itd->second.second < 0)
                 continue;
@@ -260,7 +271,8 @@ BitcoinExchange::BitcoinExchange(std::string &dataSource, std::string &dataInput
     std::ifstream data(dataSource.c_str());
     std::ifstream src(dataInput.c_str());
 
-    if (!src.is_open() || !data.is_open()){
+    if (!src.is_open() || !data.is_open())
+    {
         if (data.is_open())
             data.close();
         throw FileOpenException();
@@ -273,6 +285,7 @@ BitcoinExchange::BitcoinExchange(std::string &dataSource, std::string &dataInput
     populateOutPut();
 }
 
-const char *BitcoinExchange::FileOpenException::what() const throw(){
+const char *BitcoinExchange::FileOpenException::what() const throw()
+{
     return "could not open file.";
 }

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cerrno>
+#include <climits>
 #include <iostream>
 #include <string>
 #include <queue>
@@ -10,6 +12,11 @@
 #include <algorithm>
 #include <cstdlib>
 #include <stdexcept>
+#include <ctime>
+#include <cctype>
+#include <vector>
+#include <sstream>
+#include <cstring>
 
 class PmergeMe
 {
@@ -17,7 +24,6 @@ private:
     std::deque<int> _left;
     std::queue<int> _right;
     std::set<int> _final;
-
 public:
     PmergeMe(int ac, char **av);
     ~PmergeMe();
@@ -30,11 +36,12 @@ public:
             std::cout << *it << " ";
         std::cout << std::endl;
     }
+    bool isValidInteger(const std::string &s);
     void displayStr(int ac, char **av);
-    bool isNegative(int ac, char **av);
     void sortQueue();
     void sortDeque();
-    int splitContainer(int ac, char **av);
+    void splitContainer(int ac, char **av);
+    bool integerOverflow(int ac, char **av);
     void mergefinal();
     class WrongDataException : public std::exception
     {
